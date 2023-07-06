@@ -1,0 +1,25 @@
+{
+  "name": "antex-dash",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "wrangler publish",
+    "start": "wrangler dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/jasoryeh/antex-dash.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jasoryeh/antex-dash/issues"
+  },
+  "homepage": "https://github.com/jasoryeh/antex-dash#readme",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20230419.0",
+    "itty-router": "^3.0.12",
+    "wrangler": "^3.0.0"
+  }
+}
