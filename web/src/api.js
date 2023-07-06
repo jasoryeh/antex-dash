@@ -118,8 +118,20 @@ class AntexDash {
         return req.data;
     }
 
+    async me() {
+        var req = (await axios.post(this.endpoint + '/me', this.credentials));
+        return req.data;
+    }
+
     async news() {
         var req = (await axios.post(this.endpoint + '/news', this.credentials));
+        return req.data;
+    }
+
+    async masterschedule(date) {
+        var clone = JSON.parse(JSON.stringify(this.credentials));
+        clone.date = date; // embed credentials with request
+        var req = (await axios.post(this.endpoint + '/masterschedule', clone));
         return req.data;
     }
 

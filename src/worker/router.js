@@ -153,18 +153,37 @@ router.post('/masterschedule', async (request) => {
 	let json = await request.json();
 	//assertField('session', json);
 	//assertField('access_token', json);
-
 	let req = await Shifts.cachedScheduleOn(new Date(json.date));
 	if (!req) {
 		/*return new Response(JSON.stringify({error: true}), {
 			status: 400
 		});*/
-		req = null;
+		req = {};
 	}
-	let fields = {schedule: req};
+	let fields = req;
 
 	return new Response(
 		JSON.stringify(fields, null, 4), 
+		{
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+});
+
+router.post('/me', async (request) => {
+	let json = await request.json();
+	assertField('session', json);
+	assertField('access_token', json);
+	let req = await Misc.me(json.session, json.access_token);
+	console.log(JSON.stringify(req));
+	if (!req) {
+		return new Response(JSON.stringify({error: true}), {
+			status: 400
+		});
+	}
+	return new Response(
+		JSON.stringify(req, null, 4), 
 		{
 			headers: {
 				'Content-Type': 'application/json',

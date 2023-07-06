@@ -16,7 +16,7 @@ compatibility_date = "2023-07-01"
 # binding = "MY_KV_NAMESPACE"
 # id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 kv_namespaces = [
-    { binding = "ANTEXDASH", id = "7e0c7f47a735473c91dbbc2f8ec491ac", preview_id = "7e0c7f47a735473c91dbbc2f8ec491ac" }
+    { binding = "ANTEXDASH", id = "1f1968dddb15458db3c31d32f6241eac", preview_id = "1f1968dddb15458db3c31d32f6241eac" }
 ]
 
 # Bind an R2 Bucket. Use R2 to store arbitrarily large blobs of data, such as files.
