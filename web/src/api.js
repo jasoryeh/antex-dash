@@ -33,13 +33,17 @@ class DashUtils {
     static dateToFormFormat(dateObj) {
         return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
     }
+
+    static padNumber(number, padTo = 2) {
+        return String(number).padStart(padTo, '0');
+    }
 }
 
 class AntexDash {
     constructor(endp) {
         this.username = null;
         this.password = null;
-        this.endpoint = endp || "http://127.0.0.1:8787";
+        this.endpoint = endp || "https://antex-dash-api.jasonho.workers.dev";
         this.authenticated = false;
 
         this.credentials = null;

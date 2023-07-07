@@ -38,7 +38,7 @@
 export default {
   data() {
     return {
-      endpoint: "http://127.0.0.1:8787",
+      endpoint: "https://antex-dash-api.jasonho.workers.dev",
       username: "",
       password: "",
     }

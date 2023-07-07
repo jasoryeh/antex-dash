@@ -62,6 +62,7 @@ export default {
   data() {
     return {
         routePresets: null,
+        trades: [],
     }
   },
   methods: {
@@ -71,6 +72,7 @@ export default {
   },
   async mounted() {
     this.routePresets = await window.axdash_presets.get(window.dashapi);
+    this.trades = await window.dashapi.trades();
   }
 }
 </script>

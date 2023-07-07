@@ -23,7 +23,7 @@ defineProps({
         <div class="card-body card w-fit h-fit flex p-0" v-for="bus in Object.keys(masterSchedule[route])">
           <div class="card-header">{{ bus }}</div>
           <div class="card-body">
-            <p v-for="shift of masterSchedule[route][bus]">{{ shift.raw.screen_name }} {{ (new Date(shift.clean.start)).toLocaleTimeString() }}</p>
+            <p v-for="shift of masterSchedule[route][bus]">{{ shift.raw.screen_name }} {{ formatTime(shift.clean.start) }}-{{ formatTime(shift.clean.end) }}</p>
           </div>
         </div>
       </div>
@@ -42,23 +42,29 @@ export default {
     return {
         routePresets: null,
         masterScheduleDate: null,
+        masterSchedule: {},
     }
   },
   methods: {
     isToday: window.axdash_utils.isToday,
     calculateRounds: window.axdash_utils.calculateRounds,
     displayDateTime: window.axdash_utils.displayDateTime,
-    onMasterSchedule() {
-      this.$emit('onScheduleDate', this.masterScheduleDate);
-    }
+    padNumber: window.axdash_utils.padNumber,
+    formatTime(dateTimeObj) {
+      var d = new Date(dateTimeObj);
+      return `${this.padNumber(d.getHours())}:${this.padNumber(d.getMinutes())}`
+    },
+    async onMasterSchedule() {
+      this.masterSchedule = await window.dashapi.masterschedule(this.masterScheduleDate + 'T07:00:00.000Z');
+    },
   },
   async mounted() {
-    let now = new Date(Date.now());
-    this.masterScheduleDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-    
     this.routePresets = await window.axdash_presets.get(window.dashapi);
 
-    this.onMasterSchedule();
+    let now = new Date(Date.now());
+    this.masterScheduleDate = `${now.getFullYear()}-${this.padNumber(now.getMonth() + 1)}-${this.padNumber(now.getDate())}`;
+
+    await this.onMasterSchedule();
   }
 }
 </script>

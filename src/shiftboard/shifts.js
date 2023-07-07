@@ -88,11 +88,13 @@ function cache_insertIntoCache(cachedShifts, shift) {
 
     // insert into the collection but:
     // 1. we wrap the shift data in a object (in case future versions update data, and we need to keep track of it)
-    //      { clean_ver: version our data in case we change in the future and need to recalculate,
+    //      { modified: if we are making assumptions (changed date based on new data we see, and the changes are not from shiftboard)
+    //        clean_ver: version our data in case we change in the future and need to recalculate,
     //        raw_ver: version shiftboard's data in case they change something,
     //        clean: (our version), raw: (shiftboard version) }
     // but check for overlaps (indicating the shift or a portion of the shift was traded)
     let cachedObject = {
+        modified: false,
         clean_ver: scheduleCache.DASH_DATA_VERSION,
         raw_ver: scheduleCache.SHIFTBOARD_DATA_VERSION,
         clean: clean,
@@ -122,17 +124,21 @@ function cache_insertIntoCache(cachedShifts, shift) {
         } else if (start == siq_start && end < siq_end) {
             console.log(`A shift was split (and the first part was detected): ${JSON.stringify(siq)}`);
             siq.clean.start == end; // adjust the starting timing
+            siq.modified = true;
         } else if (start > siq_start && end == siq_end) {
             console.log(`A shift was split (and the last part was detected): ${JSON.stringify(siq)}`);
             siq.clean.end = start;
+            siq.modified = true;
         } else if (start > siq_start && end < siq_end) {
             console.log(`A shift was split (and the middle part was detected): ${JSON.stringify(siq)}`);
             // duplicate the shift
             var copy = JSON.parse(JSON.stringify(siq)); // this will become the first 1/3 of the "three-way" split
             copy.clean.end = start;
+            clean.modified = true;
             // the 2/3 is the shift we are trying to push
             // the 3/3 is the end of the "three-way: split
             siq.clean.start = end;
+            siq.modified = true;
             // push 1/3 and 2/3
             cachedShifts.push(copy);
         } else {

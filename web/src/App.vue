@@ -7,7 +7,7 @@ import Dash from './components/Dash.vue'
 
 <template>
   <nav class="nav-custom">
-    <div class="container-fluid row py-2">
+    <div class="container-fluid row py-2 m-0">
       <div class="nav-custom-left col">
         <div class="nav-custom-title">
           <b class="font-bolder">AX</b> <small class="text-xs font-light">Dash</small>

@@ -12,7 +12,7 @@ defineProps({
     <div class="card-header">
       News
     </div>
-    <div class="card-body" v-if="news.manager || news.team || news.memeber">
+    <div class="card-body" v-if="news && (news.manager || news.team || news.member)">
       <div class="card w-[100%] h-fit mx-2 my-2" v-if="news.manager">
         <div class="card-header">Manager News</div>
         <div class="card-body" v-html="news.manager"></div>
@@ -41,11 +41,13 @@ defineProps({
 export default {
   data() {
     return {
+      news: null,
     }
   },
   methods: {
   },
   async mounted() {
+    this.news = await window.dashapi.news();
   }
 }
 </script>

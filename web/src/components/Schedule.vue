@@ -15,7 +15,7 @@
                 v-model="scheduleEnd" 
                 @input="onScheduleUpdate()" />
     </div>
-    <div class="card-body" v-if="routePresets">
+    <div class="card-body" v-if="shifts && routePresets">
       <table class="table">
         <thead>
           <tr>
@@ -59,6 +59,9 @@
         No more future shifts!
       </div>
     </div>
+    <div class="card-body text-center py-4" v-else>
+      Loading...
+    </div>
   </div>
 </template>
 
@@ -101,6 +104,8 @@ export default {
     displayDateTime: window.axdash_utils.displayDateTime,
   },
   async mounted() {
+    this.routePresets = await window.axdash_presets.get(window.dashapi);
+    
     let start = new Date(Date.now());
     let end = new Date(start);
     start.setDate(start.getDate() - 7);
@@ -109,7 +114,6 @@ export default {
     this.scheduleEnd = window.axdash_utils.dateToFormFormat(end);
 
     await this.onScheduleUpdate(start, end);
-    this.routePresets = await window.axdash_presets.get(window.dashapi);
   }
 }
 </script>

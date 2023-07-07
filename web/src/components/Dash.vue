@@ -8,13 +8,13 @@ import News from './News.vue';
 <template>
   <div class="container-fluid" v-if="ready">
     <div class="row">
-      <div class="col-7">
+      <div class="col-lg-7">
         <Schedule />
       </div>
-      <div class="col-5">
-        <Trades :trades="trades" />
-        <MasterSchedule :masterSchedule="masterSchedule" @onScheduleDate="onMasterSchedule" />
-        <News :news="news" />
+      <div class="col-lg-5">
+        <Trades />
+        <MasterSchedule />
+        <News />
       </div>
     </div>
   </div>
@@ -30,16 +30,10 @@ export default {
   data() {
     return {
       ready: false,
-      trades: [],
-      news: null,
       presets: null,
-      masterSchedule: {},
     }
   },
   methods: {
-    async onMasterSchedule(date) {
-      this.masterSchedule = await window.dashapi.masterschedule(date + 'T07:00:00.000Z');
-    },
     isToday: window.axdash_utils.isToday,
     calculateRounds: window.axdash_utils.calculateRounds,
     displayDateTime: window.axdash_utils.displayDateTime,
@@ -50,10 +44,7 @@ export default {
       return;
     }
     this.me = await window.dashapi.me();
-    this.trades = await window.dashapi.trades();
     this.presets = await window.axdash_presets.get(window.dashapi);
-    this.news = await window.dashapi.news();
-    await this.onMasterSchedule();
     this.ready = true;
   },
 }
