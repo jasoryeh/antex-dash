@@ -1,12 +1,4 @@
 <script setup>
-import { ref } from 'vue'
-
-defineProps({
-  shifts: Object,
-  start: String,
-  end: String,
-})
-
 </script>
 
 <template>
@@ -36,7 +28,7 @@ defineProps({
           </tr>
         </thead>
         <tbody>
-          <tr v-for="shift in futureShifts()">
+          <tr v-for="shift in (true ? shifts : futureShifts())">
             <td :class="isToday(shift.start) ? 'bg-amber-500' : ''">
               <span class="badge" 
                     :style="`background-color: ${routePresets.route(shift.route).color}; 
@@ -83,14 +75,15 @@ defineProps({
 export default {
   data() {
     return {
+        shifts: null,
         routePresets: null,
         scheduleStart: '2023-01-01',
         scheduleEnd: '2023-01-01',
     }
   },
   methods: {
-    onScheduleUpdate() {
-        this.$emit('scheduleRange', this.scheduleStart, this.scheduleEnd);
+    async onScheduleUpdate() {
+      this.shifts = await window.dashapi.shifts(this.scheduleStart + 'T07:00:00.000Z', this.scheduleEnd + 'T07:00:00.000Z');
     },
     futureShifts() {
         return this.shifts.filter(shift => {
@@ -108,6 +101,14 @@ export default {
     displayDateTime: window.axdash_utils.displayDateTime,
   },
   async mounted() {
+    let start = new Date(Date.now());
+    let end = new Date(start);
+    start.setDate(start.getDate() - 7);
+    end.setDate(end.getDate() + 14);
+    this.scheduleStart = window.axdash_utils.dateToFormFormat(start);
+    this.scheduleEnd = window.axdash_utils.dateToFormFormat(end);
+
+    await this.onScheduleUpdate(start, end);
     this.routePresets = await window.axdash_presets.get(window.dashapi);
   }
 }

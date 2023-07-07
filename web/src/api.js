@@ -29,6 +29,10 @@ class DashUtils {
       return parsed.toLocaleDateString('en-US', DashUtils.timeOpts)
                     .replace(' at ', '<br/>')
     }
+
+    static dateToFormFormat(dateObj) {
+        return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
+    }
 }
 
 class AntexDash {

@@ -9,7 +9,7 @@ import News from './News.vue';
   <div class="container-fluid" v-if="ready">
     <div class="row">
       <div class="col-7">
-        <Schedule :shifts="shifts" />
+        <Schedule />
       </div>
       <div class="col-5">
         <Trades :trades="trades" />
@@ -30,7 +30,6 @@ export default {
   data() {
     return {
       ready: false,
-      shifts: [],
       trades: [],
       news: null,
       presets: null,
@@ -51,7 +50,6 @@ export default {
       return;
     }
     this.me = await window.dashapi.me();
-    this.shifts = await window.dashapi.shifts();
     this.trades = await window.dashapi.trades();
     this.presets = await window.axdash_presets.get(window.dashapi);
     this.news = await window.dashapi.news();
