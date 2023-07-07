@@ -1,34 +1,33 @@
 const AX_DASH_SESSION_LSKEY = 'ax-dash-session';
-class DashPresets {
-    constructor(parent) {
-        this.parent = parent;
-        this.routes = null;
+
+class DashUtils {
+    static timeOpts = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+
+    static isToday(time) {
+        let parsed = new Date(time);
+        let today = new Date(Date.now());
+        return (today.getMonth() == parsed.getMonth()) 
+                    && (today.getDate() == parsed.getDate())
+                    && (today.getFullYear() == parsed.getFullYear());
     }
 
-    async load() {
-        await this.loadRoutes();
+    static isPast(time) {
+        let parsed = new Date(time);
+        let today = new Date(Date.now());
+        return parsed < today;
     }
 
-    async loadRoutes(reload = false) {
-        if (this.routes && !reload) {
-            return;
-        }
-        this.routes = (await axios.get(this.parent.endpoint + '/configurations/routes')).data;
+    static calculateRounds(routePresetObj, start, end) {
+      var begin = new Date(start);
+      var end = new Date(end);
+      var timing = routePresetObj.timing;
+      return (end - begin) / (1000 * 60 * timing);
     }
 
-    route(route) {
-        if (!this.routes) {
-            throw new Error('Route configuration presets are not loaded!');
-        }
-        if (!this.routes['_default']) {
-            console.error('Bad route configuration preset! No "_default" configuration set!');
-            this.routes['_default'] = {
-                "color": "#000",
-                "text": "#fff",
-                "timing": 1,
-            };    
-        }
-        return this.routes[route] || this.routes['_default'];
+    static displayDateTime(date) {
+      var parsed = (new Date(date));
+      return parsed.toLocaleDateString('en-US', DashUtils.timeOpts)
+                    .replace(' at ', '<br/>')
     }
 }
 
@@ -40,8 +39,6 @@ class AntexDash {
         this.authenticated = false;
 
         this.credentials = null;
-
-        this._presets = null;
     }
 
     save() {
@@ -72,7 +69,7 @@ class AntexDash {
         return instance;
     }
 
-    static logout() {
+    logout() {
         this.authenticated = false;
         this.credentials = null;
         window.localStorage.removeItem(AX_DASH_SESSION_LSKEY);
@@ -108,8 +105,11 @@ class AntexDash {
         return this.authenticated;
     }
 
-    async shifts() {
-        var req = (await axios.post(this.endpoint + '/shifts', this.credentials));
+    async shifts(start = null, end = null) {
+        var copy = JSON.parse(JSON.stringify(this.credentials));
+        copy.start = start;
+        copy.end = end;
+        var req = (await axios.post(this.endpoint + '/shifts', copy));
         return req.data;
     }
 
@@ -136,11 +136,51 @@ class AntexDash {
     }
 
     async presets() {
-        if (!this._presets) {
-            this._presets = new DashPresets(this);
-            await this._presets.load();
-        }
-        return this._presets;
+        return this.routes = (await axios.get(this.endpoint + '/configurations/routes')).data;
     }
 }
+
+class DashPresets {
+    constructor(parent) {
+        this.parent = parent;
+        this.routes = null;
+    }
+
+    static async get(axdash_instance) {
+        if (!DashPresets.instance) {
+            DashPresets.instance = new DashPresets(axdash_instance);
+            await DashPresets.instance.load();
+        }
+        return DashPresets.instance;
+    }
+
+    async load() {
+        await this.loadRoutes();
+    }
+
+    async loadRoutes(reload = false) {
+        if (this.routes && !reload) {
+            return;
+        }
+        this.routes = await this.parent.presets();
+    }
+
+    route(route) {
+        if (!this.routes) {
+            throw new Error('Route configuration presets are not loaded!');
+        }
+        if (!this.routes['_default']) {
+            console.error('Bad route configuration preset! No "_default" configuration set!');
+            this.routes['_default'] = {
+                "color": "#000",
+                "text": "#fff",
+                "timing": 1,
+            };    
+        }
+        return this.routes[route] || this.routes['_default'];
+    }
+}
+
 window.axdash = AntexDash;
+window.axdash_presets = DashPresets;
+window.axdash_utils = DashUtils;

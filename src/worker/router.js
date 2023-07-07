@@ -83,7 +83,7 @@ router.post('/shifts', async (request) => {
 	assertField('session', json);
 	assertField('access_token', json);
 
-	let shiftRequest = await Shifts.shifts(json.session, json.access_token);
+	let shiftRequest = await Shifts.shifts(json.session, json.access_token, (json.start ? new Date(json.start) : null), (json.end ? new Date(json.end) : null));
 	if (!shiftRequest) {
 		return new Response(JSON.stringify({error: true}), {
 			status: 400
@@ -176,14 +176,15 @@ router.post('/me', async (request) => {
 	assertField('session', json);
 	assertField('access_token', json);
 	let req = await Misc.me(json.session, json.access_token);
-	console.log(JSON.stringify(req));
 	if (!req) {
 		return new Response(JSON.stringify({error: true}), {
 			status: 400
 		});
 	}
+	var fields = (await req.json());
+	fields = fields.data;
 	return new Response(
-		JSON.stringify(req, null, 4), 
+		JSON.stringify(fields, null, 4), 
 		{
 			headers: {
 				'Content-Type': 'application/json',

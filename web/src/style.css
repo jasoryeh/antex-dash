@@ -56,3 +56,17 @@ body {
   width: 100%;
   min-height: 100%;
 }
+
+.card {
+  border-radius: 0;
+  border: 0.5px solid rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+  font-weight: bolder;
+}
+
+.card-body {
+}

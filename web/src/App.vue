@@ -6,9 +6,20 @@ import Dash from './components/Dash.vue'
 </script>
 
 <template>
-  <nav class="navbar bg-body-tertiary">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">AX Dash</a>
+  <nav class="nav-custom">
+    <div class="container-fluid row py-2">
+      <div class="nav-custom-left col">
+        <div class="nav-custom-title">
+          <b class="font-bolder">AX</b> <small class="text-xs font-light">Dash</small>
+        </div>
+      </div>
+      <div class="nav-custom-right col text-right">
+        <div class="nav-custom-greeting" v-if="authenticated && user">
+          <b>Hello</b>, 
+          {{ user.screen_name }} 
+          <a href="#" @click="signout"><i class="bi bi-door-open"></i></a>
+        </div>
+      </div>
     </div>
   </nav>
   <div class="content w-full h-screen">
@@ -32,6 +43,7 @@ export default {
 
       dashapi: null,
       authenticated: false,
+      user: null,
     }
   },
   methods: {
@@ -76,6 +88,11 @@ export default {
         console.log("Saved credentials to browser.");
       }
     },
+    signout() {
+      this.show(true, "Signing out...", "warn");
+      window.dashapi.logout();
+      this.show(true, "Signed out!", "info");
+    },
   },
   filters: {},
   async mounted() {
@@ -101,9 +118,14 @@ export default {
       this.show(false);
     }
 
-    setInterval(() => {
+    setInterval(async () => {
       this.dashapi = window.dashapi;
       this.authenticated = this.dashapi && this.dashapi.authenticated;
+      if (this.authenticated) {
+        this.user = (this.user) ?? (await this.dashapi.me())
+      } else {
+        this.user = null;
+      }
     }, 100);
 
   },

@@ -22,11 +22,22 @@ async function get_user_shifts_request(session, key, start, end, count = 1000, p
 const LookAhead = 7;
 const LookBehind = 7;
 // afaik, there's no pagination yet???, so todo: pagination?
-async function shifts(session, key) {
-    var start = new Date(Date.now());
-    var end = new Date(start);
-    end.setDate(end.getDate() + LookAhead);
-    start.setDate(start.getDate() - LookBehind);
+/**
+ * @param {String} session 
+ * @param {String} key 
+ * @param {Date} reqStart 
+ * @param {Date} reqEnd 
+ * @returns 
+ */
+async function shifts(session, key, reqStart = null, reqEnd = null) {
+    var start = reqStart;
+    var end = reqEnd;
+    if (!reqStart || !reqEnd) {
+        var start = new Date(Date.now());
+        var end = new Date(start);
+        end.setDate(end.getDate() + LookAhead);
+        start.setDate(start.getDate() - LookBehind);
+    }
     let req = await get_user_shifts_request(session, key, start, end, 1000, 1);
     if (!req.ok) {
         return null;
