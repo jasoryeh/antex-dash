@@ -183,6 +183,7 @@ router.post('/me', async (request) => {
 	}
 	var fields = (await req.json());
 	fields = fields.data;
+	await Misc.cacheMember(fields); // cache members
 	return new Response(
 		JSON.stringify(fields, null, 4), 
 		{

@@ -159,6 +159,10 @@ async function simplifyAndCacheShifts(raw) {
         simplified.push(clean); // push to shifts array to return to user
 
         // optimize cache hits
+        if (!clean.yours) {
+            // don't cache non-owned shifts
+            continue;
+        }
         var {start, end, route, bus} = clean;
         start = new Date(clean.start);
         end = new Date(clean.end);
@@ -211,19 +215,31 @@ async function trades(session, key, count = 1000, page = 1) {
     return req;
 }
 
+/**
+ * @param {String} timestr 
+ * @param {Date} onDay 
+ * @returns 
+ */
 function trades_parseTime(timestr, onDay) {
-    let [h, m_ap] = timestr.split(':');
-    h = parseInt(h);
-    let m = m_ap.substr(0, 2);
-    m = parseInt(m);
-    let ap = m_ap.substr(2, 2);
-    var c = new Date(onDay.getTime());
-    c.setHours(
-        h + (ap == 'pm' ? (h == 12 ? 0 : 12) : (h == 12 ? -12 : 0)),
-        m,
-        0, 0
-    );
-    return c;
+    var returned = new Date(onDay.getTime()); // copy
+
+    timestr = timestr.toUpperCase();
+    let time = timestr.replace(/[^0-9]/g, '');
+    var isPM = timestr.includes('PM');
+    if (time.includes(':')) {
+        let [h, m] = time.split(':');
+        h = parseInt(h);
+        m = parseInt(m);
+        returned.setHours(h + (isPM ? (h == 12 ? 0 : 12) : (h == 12 ? -12 : 0)),
+                    m,
+                    0, 0);
+    } else {
+        let h = parseInt(time);
+        returned.setHours(h + (isPM ? (h == 12 ? 0 : 12) : (h == 12 ? -12 : 0)),
+                    0,
+                    0, 0);
+    }
+    return returned;
 }
 
 function simplifyTrades(raw) {

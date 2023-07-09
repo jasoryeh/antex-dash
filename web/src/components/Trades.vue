@@ -33,11 +33,13 @@ defineProps({
                       {{ trade.route }}
                 </span>
               </td>
-              <td>{{ calculateRounds(trade.route, trade.start, trade.end) }}</td>
+              <td>{{ calculateRounds(routePresets.route(trade.route), trade.start, trade.end) }}</td>
               <td>
                 {{ trade.from_name }}
                 <br />
-                ({{ trade.from_username }})
+                <span v-if="trade.from_username">
+                  ({{ trade.from_username }})
+                </span>
               </td>
               <td v-html="displayDateTime(trade.start)"></td>
               <td v-html="displayDateTime(trade.end)"></td>

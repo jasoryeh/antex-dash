@@ -37,13 +37,21 @@ class DashUtils {
     static padNumber(number, padTo = 2) {
         return String(number).padStart(padTo, '0');
     }
+
+    static getAPIEndpoint() {
+        var here = new URL(location.href);
+        if (here.searchParams.has('endpoint')) {
+            return here.searchParams.get('endpoint');
+        }
+        return "https://antex-dash-api.jasonho.workers.dev";
+    }
 }
 
 class AntexDash {
     constructor(endp) {
         this.username = null;
         this.password = null;
-        this.endpoint = endp || "https://antex-dash-api.jasonho.workers.dev";
+        this.endpoint = endp ?? DashUtils.getAPIEndpoint();
         this.authenticated = false;
 
         this.credentials = null;

@@ -1,6 +1,7 @@
 const {
     shiftboard_proxy_get_request
 } = require('./common');
+const membersCache = require('../cache/members');
 
 async function news(session, key) {
     let url = `https://m.shiftboard.com/api/v1/news`;
@@ -20,7 +21,12 @@ async function me(session, key) {
     return req;
 }
 
+async function cacheMember(memberObject) {
+    await membersCache.addMember(memberObject.account_id, memberObject);
+}
+
 module.exports = {
     news,
     me,
+    cacheMember,
 }

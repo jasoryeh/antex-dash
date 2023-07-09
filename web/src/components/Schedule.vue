@@ -4,16 +4,23 @@
 <template>
   <div class="card mx-2 my-2">
     <div class="card-header">
-        Shifts from 
+        Shifts <span class="font-normal">from</span> 
         <input type="date" id="start" name="start" 
                 class="border-black-500 border-2 rounded-xl py-1 px-2" 
                 v-model="scheduleStart" 
                 @input="onScheduleUpdate()" />
-       to 
+       <span class="font-normal"> to </span>
        <input type="date" id="start" name="start" 
                 class="border-black-500 border-2 rounded-xl py-1 px-2" 
                 v-model="scheduleEnd" 
                 @input="onScheduleUpdate()" />
+      <br />
+      <small class="font-normal pt-4" v-if="shifts">
+        <i class="bi bi-clock"></i>&nbsp;
+        <span class="font-bold">{{ hours() }} </span>
+        <span> hour{{ hours() == 1 ? '' : 's' }} scheduled in this range.</span>
+      </small>
+      <br />
     </div>
     <div class="card-body" v-if="shifts && routePresets">
       <table class="table">
@@ -28,8 +35,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="shift in (true ? shifts : futureShifts())">
-            <td :class="isToday(shift.start) ? 'bg-amber-500' : ''">
+          <tr v-for="shift in shifts">
+            <td>
               <span class="badge" 
                     :style="`background-color: ${routePresets.route(shift.route).color}; 
                              color: ${routePresets.route(shift.route).text};`">
@@ -37,11 +44,14 @@
               </span>
             </td>
             <td>{{ shift.bus.replace("BUS ", '') }}</td>
-            <td>{{ calculateRounds(routePresets.route(shift.route), shift.start, shift.end) }}</td>
-            <td v-html="displayDateTime(shift.start)"></td>
-            <td v-html="displayDateTime(shift.end)"></td>
+            <td>
+              <b class="text-amber-400 drop-shadow-2xl">{{ calculateRounds(routePresets.route(shift.route), shift.start, shift.end) % 1 != 0 ? '⚠' : '' }}</b>
+              {{ Math.floor(calculateRounds(routePresets.route(shift.route), shift.start, shift.end)) }}
+            </td>
+            <td :class="isToday(shift.start) ? '!bg-amber-200 font-bold' : ''" v-html="displayDateTime(shift.start)"></td>
+            <td :class="isToday(shift.start) ? '!bg-amber-200 font-bold' : ''" v-html="displayDateTime(shift.end)"></td>
             <td class="text-center">
-                {{ isPast(shift.end) ? "✅" : "" }}
+                {{ isPast(shift.end) ? "✅" : "⌛" }}
                 {{ shift.in_trade ? "⏫" : "" }}
                 {{ isToday(shift.start) ? "⏰" : "" }}
             </td>
@@ -50,6 +60,8 @@
       </table>
       <small>
         <ul class="schedule-key flex">
+            <li><b class="text-amber-400 drop-shadow-2xl">⚠</b> Timing Inaccuracy (Closing/Timing Change?)</li>
+            <li>⌛ Future</li>
             <li>✅ Finished</li>
             <li>⏫ Posted</li>
             <li>⏰ Today</li>
@@ -95,8 +107,16 @@ export default {
             startDay.setMinutes(59);
             startDay.setSeconds(59);
             startDay.setMilliseconds(999);
-            return shift.yours && (startDay > Date.now());
+            return shift.yours && (startDay > Date.now()) && shift.yours;
         });
+    },
+    hours() {
+      var time = 0;
+      for (let shift of this.shifts) {
+        console.log(shift);
+        time += (new Date(shift.end)) - (new Date(shift.start));
+      }
+      return (time / (1000 * 60 * 60));
     },
     isToday: window.axdash_utils.isToday,
     isPast: window.axdash_utils.isPast,
@@ -108,7 +128,7 @@ export default {
     
     let start = new Date(Date.now());
     let end = new Date(start);
-    start.setDate(start.getDate() - 7);
+    start.setDate(start.getDate() - 1);
     end.setDate(end.getDate() + 14);
     this.scheduleStart = window.axdash_utils.dateToFormFormat(start);
     this.scheduleEnd = window.axdash_utils.dateToFormFormat(end);

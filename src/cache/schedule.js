@@ -1,6 +1,6 @@
 // schedule caching
 
-const scheduleCache = require('./util')(ANTEXDASH, 'cache_schedules');
+const scheduleCache = require('./util')(ANTEXDASH, 'cache_schedules_');
 
 /**
  * @param {Date} dateObj 

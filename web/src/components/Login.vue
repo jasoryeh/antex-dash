@@ -38,7 +38,7 @@
 export default {
   data() {
     return {
-      endpoint: "https://antex-dash-api.jasonho.workers.dev",
+      endpoint: window.axdash_utils.getAPIEndpoint(),
       username: "",
       password: "",
     }

@@ -17,7 +17,7 @@ import Dash from './components/Dash.vue'
         <div class="nav-custom-greeting" v-if="authenticated && user">
           <b>Hello</b>, 
           {{ user.screen_name }} 
-          <a href="#" @click="signout"><i class="bi bi-door-open"></i></a>
+          <a href="#" @click="signout" title="Sign out"><i class="bi bi-door-open"></i></a>
         </div>
       </div>
     </div>
@@ -56,7 +56,7 @@ export default {
       this.info_type = type;
     },
     resetSession() {
-      window.dashapi = new window.axdash();
+      window.dashapi = new window.axdash(window.axdash_utils.getAPIEndpoint());
     },
     async checkAndLogin() {
       if (!window.dashapi.credentials) {
@@ -75,6 +75,7 @@ export default {
       this.show(false);
       window.dashapi.username = usn;
       window.dashapi.password = pwd;
+      window.dashapi.endpoint = endp;
       try {
         await window.dashapi.logIn();
       } catch(ex) {
