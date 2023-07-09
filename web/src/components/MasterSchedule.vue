@@ -16,13 +16,13 @@ defineProps({
               v-model="masterScheduleDate" 
               @input="onMasterSchedule()" />
     </div>
-    <div class="card-body row">
-      <div class="card w-fit h-fit p-0 mx-1" v-if="Object.keys(masterSchedule).length > 0" v-for="route in Object.keys(masterSchedule)">
+    <div class="card-body row text-sm">
+      <div class="card w-fit h-fit p-0 m-1" v-if="Object.keys(masterSchedule).length > 0" v-for="route in Object.keys(masterSchedule)">
         <div class="card-header" :style="`background-color: ${routePresets.route(route).color}; 
                                           color: ${routePresets.route(route).text};`">{{ route }}</div>
-        <div class="card-body card w-fit h-fit flex p-0" v-for="bus in Object.keys(masterSchedule[route])">
+        <div class="card-body card flex p-0" v-for="bus in Object.keys(masterSchedule[route])">
           <div class="card-header">{{ bus }}</div>
-          <div class="card-body">
+          <div class="card-body text-xs">
             <p v-for="shift of masterSchedule[route][bus]">{{ shift.raw.screen_name }} {{ formatTime(shift.clean.start) }}-{{ formatTime(shift.clean.end) }}</p>
           </div>
         </div>
