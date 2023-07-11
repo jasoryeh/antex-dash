@@ -113,7 +113,6 @@ export default {
     hours() {
       var time = 0;
       for (let shift of this.shifts) {
-        console.log(shift);
         time += (new Date(shift.end)) - (new Date(shift.start));
       }
       return (time / (1000 * 60 * 60));

@@ -15,6 +15,17 @@ defineProps({
               class="border-black-500 border-2 rounded-xl py-1 px-2" 
               v-model="masterScheduleDate" 
               @input="onMasterSchedule()" />
+      <br />
+      <small class="font-normal pt-4" v-if="!agreeToCache">
+        <i class="bi bi-cloud-arrow-up"></i>
+        &nbsp;
+        <a href="#" class="" @click="commitShifts">Click here to synchronize your schedule to Dash.</a>
+      </small>
+      <small class="font-normal pt-4" v-else>
+        <i class="bi bi-cloud-check"></i>
+        &nbsp;
+        <a href="#" class="" @click="commitShifts">Your shifts were synchronized to Dash!</a>
+      </small>
     </div>
     <div class="card-body row text-sm">
       <div class="card w-fit h-fit p-0 m-1" v-if="Object.keys(masterSchedule).length > 0" v-for="route in Object.keys(masterSchedule)">
@@ -46,6 +57,7 @@ export default {
         routePresets: null,
         masterScheduleDate: null,
         masterSchedule: {},
+        agreeToCache: false,
     }
   },
   methods: {
@@ -60,6 +72,13 @@ export default {
     async onMasterSchedule() {
       this.masterSchedule = await window.dashapi.masterschedule(this.masterScheduleDate + 'T07:00:00.000Z');
     },
+    async commitShifts() {
+      if (this.agreeToCache) {
+        return;
+      }
+      await window.dashapi.shifts();
+      this.agreeToCache = true;
+    }
   },
   async mounted() {
     this.routePresets = await window.axdash_presets.get(window.dashapi);

@@ -53,6 +53,9 @@ async function shifts(session, key, reqStart = null, reqEnd = null) {
 function simplifyShifts(raw) {
     var interm = [];
     for (let sh of raw) {
+        if (!sh.timezone.includes('Pacific')) {
+            continue;
+        }
         interm.push([{
             shiftboard_id: sh.id,
             covered: sh.covered,
@@ -156,13 +159,13 @@ async function simplifyAndCacheShifts(raw) {
     let sorted = {}; 
     let simplified = [];
     for (let [clean, raw] of pairs) {
-        simplified.push(clean); // push to shifts array to return to user
-
-        // optimize cache hits
         if (!clean.yours) {
             // don't cache non-owned shifts
+            // don't show non-yours shifts
             continue;
         }
+        simplified.push(clean); // push to shifts array to return to user
+
         var {start, end, route, bus} = clean;
         start = new Date(clean.start);
         end = new Date(clean.end);

@@ -25,7 +25,7 @@ class DashUtils {
     }
 
     static displayDateTime(date) {
-      var parsed = (new Date(date));
+      var parsed = (new Date(date.replace('Z', '')));
       return parsed.toLocaleDateString('en-US', DashUtils.timeOpts)
                     .replace(' at ', '<br/>')
     }
