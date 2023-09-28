@@ -5,10 +5,21 @@ module.exports = {
             "text": "#fff",
             "timing": 1,
         },
-        "H LINE": {
-            "color": "rgb(217 70 239)",
+        "OVERFLOW": {
+            "color": "rgb(0 192 255)",
             "text": "#fff",
             "timing": 30,
+        },
+        "H LINE": {
+            "color": "rgb(124 208 255)",
+            "color_summer": "rgb(217 70 239)",
+            "text": "#fff",
+            "timing": 30,
+        },
+        "E LINE": {
+            "color": "rgb(209 146 255)",
+            "text": "#fff",
+            "timing": 20,
         },
         "TRAINING": {
             "color": "rgb(51 65 85)",
@@ -21,7 +32,7 @@ module.exports = {
             "timing": 1,
         },
         "FIELD OPS": {
-            "color": "rgb(28 25 23)",
+            "color": "rgb(142 117 101)",
             "text": "#fff",
             "timing": 1,
         },

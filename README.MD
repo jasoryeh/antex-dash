@@ -8,4 +8,4 @@ The 'backend', handles proxying and translating Shiftboard shifts to something t
 
 2. Web
 Directory: `/web`
-The 'froentend', acts pretty.
+The 'frontend', acts pretty.
