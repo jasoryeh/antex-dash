@@ -227,7 +227,7 @@ function trades_parseTime(timestr, onDay) {
     var returned = new Date(onDay.getTime()); // copy
 
     timestr = timestr.toUpperCase();
-    let time = timestr.replace(/[^0-9]/g, '');
+    let time = timestr.replace(/[^0-9:]/g, '');
     var isPM = timestr.includes('PM');
     if (time.includes(':')) {
         let [h, m] = time.split(':');
@@ -249,7 +249,7 @@ function simplifyTrades(raw) {
     var interm = [];
     for (let sh of raw) {
         var p_day = new Date(sh.shiftRef.display_date);
-        var [t_start, t_end] = sh.shiftRef.display_time.split(' - ', 2);
+        var [t_start, t_end] = sh.shiftRef.display_time.replaceAll(' ', '').split('-', 2);
         var p_start = trades_parseTime(t_start, p_day);
         var p_end = trades_parseTime(t_end, p_day);
         interm.push({
