@@ -33,20 +33,28 @@ defineProps({
                       {{ trade.route }}
                 </span>
               </td>
-              <td>{{ calculateRounds(routePresets.route(trade.route), trade.start, trade.end) }}</td>
               <td>
+                <b class="text-amber-400 drop-shadow-2xl">{{ calculateRounds(routePresets.route(trade.route), trade.start, trade.end) % 1 != 0 ? '⚠' : '' }}</b>
+                {{ Math.floor(calculateRounds(routePresets.route(trade.route), trade.start, trade.end)) }}
+              </td>
+              <td class="text-xs">
                 {{ trade.from_name }}
                 <br />
                 <span v-if="trade.from_username">
                   ({{ trade.from_username }})
                 </span>
               </td>
-              <td v-html="displayDateTime(trade.start)"></td>
-              <td v-html="displayDateTime(trade.end)"></td>
+              <td class="text-xs" v-html="displayDateTime(trade.start)"></td>
+              <td class="text-xs" v-html="displayDateTime(trade.end)"></td>
               <td>{{ trade.notes }}</td>
             </tr>
           </tbody>
         </table>
+        <small>
+          <ul class="schedule-key flex">
+              <li><b class="text-amber-400 drop-shadow-2xl">⚠</b> Timing Inaccuracy (Closing/Timing Change?)</li>
+          </ul>
+        </small>
         <div class="py-8 text-center" v-if="trades.length == 0">
           No trades available!
         </div>

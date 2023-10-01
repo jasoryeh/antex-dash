@@ -48,8 +48,8 @@
               <b class="text-amber-400 drop-shadow-2xl">{{ calculateRounds(routePresets.route(shift.route), shift.start, shift.end) % 1 != 0 ? '⚠' : '' }}</b>
               {{ Math.floor(calculateRounds(routePresets.route(shift.route), shift.start, shift.end)) }}
             </td>
-            <td :class="isToday(shift.start) ? '!bg-amber-200 font-bold' : ''" v-html="displayDateTime(shift.start)"></td>
-            <td :class="isToday(shift.start) ? '!bg-amber-200 font-bold' : ''" v-html="displayDateTime(shift.end)"></td>
+            <td :class="isToday(shift.start) ? '!bg-amber-200 font-bold text-xs' : 'text-xs'" v-html="displayDateTime(shift.start)"></td>
+            <td :class="isToday(shift.start) ? '!bg-amber-200 font-bold text-xs' : 'text-xs'" v-html="displayDateTime(shift.end)"></td>
             <td class="text-center">
                 {{ isPast(shift.end) ? "✅" : "⌛" }}
                 {{ shift.in_trade ? "⏫" : "" }}
