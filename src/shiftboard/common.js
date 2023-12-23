@@ -22,9 +22,12 @@ async function shiftboard_proxy_get_request(session, key, url) {
     });
 }
 
-async function shiftboard_proxy_varying_request(session, key, url, method, body) {
+async function shiftboard_proxy_varying_request(session, key, url, method, body, headers = {"content-type": "application/json;charset=UTF-8"}) {
     return await fetch(url, {
-        headers: getShiftboardHeaders(session, key),
+        headers: {
+            ...headers,
+            ...getShiftboardHeaders(session, key)
+        },
         method: method,
         body: body
     })
