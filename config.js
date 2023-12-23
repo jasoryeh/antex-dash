@@ -5,11 +5,6 @@ module.exports = {
             "text": "#fff",
             "timing": 1,
         },
-        "OVERFLOW": {
-            "color": "rgb(0 192 255)",
-            "text": "#fff",
-            "timing": 30,
-        },
         "H LINE": {
             "color": "rgb(124 208 255)",
             "color_summer": "rgb(217 70 239)",
