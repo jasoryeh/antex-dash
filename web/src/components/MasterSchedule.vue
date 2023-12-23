@@ -70,7 +70,7 @@ export default {
       return `${this.padNumber(d.getHours())}:${this.padNumber(d.getMinutes())}`
     },
     async onMasterSchedule() {
-      this.masterSchedule = await window.dashapi.masterschedule(this.masterScheduleDate + 'T07:00:00.000Z');
+      this.masterSchedule = await window.dashapi.masterschedule(this.masterScheduleDate);
     },
     async commitShifts() {
       if (this.agreeToCache) {

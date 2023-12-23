@@ -31,7 +31,8 @@ class DashUtils {
     }
 
     static dateToFormFormat(dateObj) {
-        return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
+        return dateObj.toISOString().split('T')[0];
+        //return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
     }
 
     static padNumber(number, padTo = 2) {
@@ -153,6 +154,42 @@ class AntexDash {
 
     async presets() {
         return this.routes = (await axios.get(this.endpoint + '/configurations/routes')).data;
+    }
+
+    async trade_get(shift_id) {
+        // fields returned: can_trade(boolean), other tradeboard data
+        return (await axios.post(this.endpoint + '/trade/get', {
+            shift: shift_id,
+            ...this.credentials
+        })).data;
+    }
+
+    async trade_post(shift_id, note) {
+        // fields returned: trade_id
+        return (await axios.post(this.endpoint + '/trade/post', {
+            shift: shift_id,
+            note: note,
+            ...this.credentials
+        })).data;
+    }
+
+    async trade_cancel_blind(shift_id) {
+        let info = await this.trade_get(shift_id);
+        if (!info.trade) {
+            return null;
+        }
+        var trade_id = info.trade.tradeboard.id;
+        console.log(`Resolved trade id #${trade_id} for shift id ${shift_id}`);
+        return await this.trade_cancel(shift_id, trade_id);
+    }
+
+    async trade_cancel(shift_id, trade_id) {
+        // fields returned: trade_id
+        return (await axios.post(this.endpoint + '/trade/cancel', {
+            shift: shift_id,
+            trade: trade_id,
+            ...this.credentials
+        })).data;
     }
 }
 

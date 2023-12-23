@@ -101,6 +101,74 @@ router.post('/shifts', async (request) => {
 		})
 });
 
+router.post('/trade/get', async (request) => {
+	let json = await request.json();
+	assertField('session', json);
+	assertField('access_token', json);
+
+	let trade_data = await Shifts.getTrade(json.session, json.access_token, json.shift);
+	
+	return new Response(
+		JSON.stringify({
+			can_trade: trade_data == null,
+			trade: trade_data
+		}, null, 4), 
+		{
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+});
+
+router.post('/trade/post', async (request) => {
+	let json = await request.json();
+	assertField('session', json);
+	assertField('access_token', json);
+	
+	let trade_data = await Shifts.startTrade(json.session, json.access_token, json.shift, json.note);
+
+	if (!trade_data) {
+		return new Response(JSON.stringify({error: true}), {
+			status: 400
+		});
+	}
+	
+	return new Response(
+		JSON.stringify({
+			trade: trade_data,
+		}, null, 4), 
+		{
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+});
+
+
+router.post('/trade/cancel', async (request) => {
+	let json = await request.json();
+	assertField('session', json);
+	assertField('access_token', json);
+
+	let trade_data = await Shifts.deleteTrade(json.session, json.access_token, json.shift, json.trade);
+
+	if (!trade_data) {
+		return new Response(JSON.stringify({error: true}), {
+			status: 400
+		});
+	}
+	
+	return new Response(
+		JSON.stringify({
+			...trade_data,
+		}, null, 4), 
+		{
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+});
+
 
 router.post('/trades', async request => {
 	let json = await request.json();

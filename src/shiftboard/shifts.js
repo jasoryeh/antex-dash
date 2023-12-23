@@ -1,5 +1,7 @@
 const {
-    shiftboard_proxy_get_request
+    shiftboard_proxy_get_request,
+    shiftboard_proxy_post_request,
+    shiftboard_proxy_varying_request,
 } = require('./common');
 const scheduleCache = require('../cache/schedule');
 
@@ -20,7 +22,7 @@ async function get_user_shifts_request(session, key, start, end, count = 1000, p
 }
 
 const LookAhead = 7;
-const LookBehind = 7;
+const LookBehind = 1;
 // afaik, there's no pagination yet???, so todo: pagination?
 /**
  * @param {String} session 
@@ -283,6 +285,46 @@ async function cachedScheduleOn(date) {
     return monthSchedule[String(date.getDate())];
 }
 
+async function startTrade(session, key, shift_id, notes = '') {
+    // POST { notes }
+    var url = `https://m.shiftboard.com/api/v1/shifts/${shift_id}/trade`;
+    var req = await shiftboard_proxy_post_request(session, key, url, JSON.stringify({
+        notes: notes
+    }));
+    if (!req.ok) {
+        return null;
+    }
+    return (await req.json()).data.id;
+}
+
+/**
+ * Gets trade information if this shift is being traded, 
+ *   otherwise returns null if no trades are currently posted for it
+ * @param {*} session 
+ * @param {*} key 
+ * @param {*} shift_id 
+ * @returns 
+ */
+async function getTrade(session, key, shift_id) {
+    var url = `https://m.shiftboard.com/api/v1/shifts/${shift_id}/trade`;
+    var req = await shiftboard_proxy_get_request(session, key, url);
+    if (!req.ok) {
+        return null;
+    }
+    return (await req.json()).data;
+}
+
+
+async function deleteTrade(session, key, shift_id, trade_id) {
+    // POST { notes }
+    var url = `https://m.shiftboard.com/api/v1/shifts/${shift_id}/trade/${trade_id}`;
+    var req = await shiftboard_proxy_varying_request(session, key, url, "DELETE");
+    if (!req.ok) {
+        return null;
+    }
+    return (await req.json());
+}
+
 module.exports = {
     shifts,
     simplifyShifts,
@@ -290,4 +332,7 @@ module.exports = {
     simplifyTrades,
     simplifyAndCacheShifts,
     cachedScheduleOn,
+    getTrade,
+    startTrade,
+    deleteTrade,
 }
