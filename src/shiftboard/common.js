@@ -22,6 +22,20 @@ async function shiftboard_proxy_get_request(session, key, url) {
     });
 }
 
+async function shiftboard_proxy_varying_request(session, key, url, method, body) {
+    return await fetch(url, {
+        headers: getShiftboardHeaders(session, key),
+        method: method,
+        body: body
+    })
+}
+
+async function shiftboard_proxy_post_request(session, key, url, body) {
+    return await shiftboard_proxy_varying_request(session, key, url, "POST", body);
+}
+
 module.exports = {
-    shiftboard_proxy_get_request
+    shiftboard_proxy_get_request,
+    shiftboard_proxy_varying_request,
+    shiftboard_proxy_post_request,
 }
