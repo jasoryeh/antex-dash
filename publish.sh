@@ -7,6 +7,4 @@ wrangler deploy
 
 # deploy ui
 cd web
-npx vite build
-cd $cwd
-wrangler pages deploy web/dist
+bash publish-page.sh
